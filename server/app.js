@@ -81,9 +81,17 @@ app.post('/links',
 app.post('/signup',
   (req, res) => {
     console.log('SIGNUP REQUEST BODY:  ', req.body);
-    models.Users.create(req.body);
+    models.Users.create(req.body, (err) => {
+      if (err) {
+        // redirect to signup! again...
+        console.log(' > REDIRECTING \n');
+        res.redirect('/signup');
+      } else {
+        res.redirect('/');
+      }
+    });
 
-    res.status(201).send('Yay, we did it');
+
   });
 
 app.post('/login',

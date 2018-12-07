@@ -33,7 +33,7 @@ class Users extends Model {
    * @returns {Promise<Object>} A promise that is fulfilled with the result of
    * the record creation or rejected with the error that occured.
    */
-  create({ username, password }) {
+  create({ username, password }, callback) {
     let salt = utils.createRandom32String();
 
     let newUser = {
@@ -42,7 +42,7 @@ class Users extends Model {
       password: utils.createHash(password, salt)
     };
 
-    return super.create.call(this, newUser);
+    return super.create.call(this, newUser, callback);
   }
 }
 

@@ -184,6 +184,7 @@ describe('', function () {
         if (error) { return done(error); }
         request(options, function (err, response, resBody) {
           if (err) { return done(err); }
+          console.log('RESPONSE HEADER -->', response.headers)
           expect(response.headers.location).to.equal('/signup');
           done();
         });
