@@ -80,28 +80,20 @@ app.post('/links',
 
 app.post('/signup',
   (req, res) => {
-    console.log('SIGNUP REQUEST BODY:  ', req.body);
-    models.Users.create(req.body, (err) => {
-      if (err) {
-        // redirect to signup! again...
-        console.log(' > REDIRECTING \n');
-        res.redirect('/signup');
-      } else {
-        res.redirect('/');
-      }
-    });
-
-
+    models.Users.create(req.body)
+      .then(() => res.redirect('/'))
+      .catch(err => res.redirect('/signup'));
   });
 
 app.post('/login',
   (req, res) => {
-    models.Links.getAll()
-      .then(links => {
-        res.status(201).send(links);
-      })
-      .error(error => {
-        res.status(500).send(error);
+    models.Users.get({ username: req.body.username })
+      .then((results) => {
+        if (results && models.Users.compare(req.body.password, results.password, results.salt)) {
+          res.redirect('/');
+        } else {
+          res.redirect('/login');
+        }
       });
   });
 

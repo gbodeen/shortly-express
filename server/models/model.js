@@ -1,14 +1,8 @@
 const db = require('../db');
 const _ = require('lodash');
 
-const executeQuery = (query, values, callback) => {
-  return db.queryAsync(query, values).spread(results => results)
-    .then(results => {
-      callback(null);
-      return results;
-    })
-    .catch(err => callback(err));
-  //.finally(_ => callback(null));
+const executeQuery = (query, values) => {
+  return db.queryAsync(query, values).spread(results => results);
 };
 
 const parseData = options => {
@@ -71,9 +65,9 @@ class Model {
    * containing the results of the query or is rejected with the the error that occurred
    * during the query.
    */
-  create(options, callback) {
+  create(options) {
     let queryString = `INSERT INTO ${this.tablename} SET ?`;
-    return executeQuery(queryString, options, callback);
+    return executeQuery(queryString, options);
   }
 
   /**

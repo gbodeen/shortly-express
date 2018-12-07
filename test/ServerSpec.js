@@ -184,7 +184,6 @@ describe('', function () {
         if (error) { return done(error); }
         request(options, function (err, response, resBody) {
           if (err) { return done(err); }
-          console.log('RESPONSE HEADER -->', response.headers)
           expect(response.headers.location).to.equal('/signup');
           done();
         });
@@ -209,7 +208,7 @@ describe('', function () {
     });
   });
 
-  xdescribe('Account Login:', function () {
+  describe('Account Login:', function () {
 
     beforeEach(function (done) {
       var options = {
