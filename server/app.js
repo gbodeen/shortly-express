@@ -5,6 +5,7 @@ const partials = require('express-partials');
 const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
+var cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(cookieParser());
 
 app.get('/',
   (req, res, next) => {
@@ -99,9 +101,7 @@ app.post('/login',
   });
 
 app.all(/.*/, (req, res, next) => {
-  console.log('It IS even in here.\n');
   Auth.createSession(req, res, next);
-  next();
 });
 
 /************************************************************/
