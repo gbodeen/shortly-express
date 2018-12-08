@@ -521,7 +521,6 @@ describe('', function () {
       requestWithSession('http://127.0.0.1:4568/', function (error, res, body) {
         if (error) { return done(error); }
         var cookies = cookieJar.getCookies('http://127.0.0.1:4568/');
-        console.log('Mmm, cookies:  ', cookieJar, requestWithSession.jar(), '\n\n and response ', res.cookies);
         expect(cookies.length).to.equal(1);
         done();
       });

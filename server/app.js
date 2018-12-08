@@ -5,7 +5,9 @@ const partials = require('express-partials');
 const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
-var cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
+const request = require('request');
+// var toughCookie = require('tough-cookie').Cookie;
 
 const app = express();
 
@@ -16,6 +18,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(cookieParser());
+
+app.all(/.*/, (req, res, next) => {
+  Auth.createSession(req, res, next);
+});
 
 app.get('/',
   (req, res, next) => {
@@ -100,9 +106,7 @@ app.post('/login',
       .finally(() => next());
   });
 
-app.all(/.*/, (req, res, next) => {
-  Auth.createSession(req, res, next);
-});
+
 
 /************************************************************/
 // Handle the code parameter route last - if all other routes fail
