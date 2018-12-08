@@ -15,11 +15,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 
-
-
 app.get('/',
-  (req, res) => {
+  (req, res, next) => {
     res.render('index');
+    next();
   });
 
 app.get('/create',
@@ -79,14 +78,15 @@ app.post('/links',
 /************************************************************/
 
 app.post('/signup',
-  (req, res) => {
+  (req, res, next) => {
     models.Users.create(req.body)
       .then(() => res.redirect('/'))
-      .catch(err => res.redirect('/signup'));
+      .catch(err => res.redirect('/signup'))
+      .finally(() => next());
   });
 
 app.post('/login',
-  (req, res) => {
+  (req, res, next) => {
     models.Users.get({ username: req.body.username })
       .then((results) => {
         if (results && models.Users.compare(req.body.password, results.password, results.salt)) {
@@ -94,9 +94,15 @@ app.post('/login',
         } else {
           res.redirect('/login');
         }
-      });
+      })
+      .finally(() => next());
   });
 
+app.all(/.*/, (req, res, next) => {
+  console.log('It IS even in here.\n');
+  Auth.createSession(req, res, next);
+  next();
+});
 
 /************************************************************/
 // Handle the code parameter route last - if all other routes fail
