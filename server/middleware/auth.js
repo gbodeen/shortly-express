@@ -25,10 +25,24 @@ initializeSession = (req, res, next) => {
     })
     .then(newSession => {
       req.session = newSession;
-      res.cookie('shortlyid', JSON.stringify({ value: newSession.hash }));
+      res.cookie('shortlyid', newSession.hash);
       return models.Users.get({ 'username': req.body.username })
         .then(matchingUser => {
-          models.Sessions.update({ 'id': newSession.id }, { 'userId': matchingUser ? matchingUser.id : null });
+          if (req.body.username === 'Vivian') {
+            console.log('Vivian says Hi.   ', matchingUser);
+          }
+
+          if (matchingUser) {
+            return models.Sessions.update({ 'id': newSession.id }, { 'userId': matchingUser.id });
+            // .then(() => {
+            //   models.Sessions.get({ 'id': newSession.id })
+            //     .then(gottenSession => {
+            //       console.log(gottenSession);
+            //     });
+            // })
+          } else {
+            return null;
+          }
         });
     })
     .finally(() => next());
@@ -39,7 +53,8 @@ assignExistingSession = (req, res, next) => {
     .then(matchingSession => {
       if (matchingSession) {
         req.session = matchingSession;
-        res.cookie('shortlyid', JSON.stringify({ value: matchingSession.hash }));
+        res.cookie('shortlyid', matchingSession.hash);
+        //res.cookie('shortlyid', JSON.stringify({ value: matchingSession.hash }));
         next();
       } else {
         initializeSession(req, res, next);

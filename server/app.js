@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(cookieParser());
 
-app.all(/.*/, (req, res, next) => {
+app.all('/', (req, res, next) => {
   Auth.createSession(req, res, next);
 });
 
@@ -85,9 +85,14 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 
+app.post('/signup', (req, res, next) => {
+  Auth.createSession(req, res, next);
+});
+
 app.post('/signup',
   (req, res, next) => {
     models.Users.create(req.body)
+      //.then(() => Auth.createSession(req, res, () => { }))
       .then(() => res.redirect('/'))
       .catch(err => res.redirect('/signup'))
       .finally(() => next());
@@ -106,7 +111,9 @@ app.post('/login',
       .finally(() => next());
   });
 
-
+// app.all(/.*/, (req, res, next) => {
+//   Auth.createSession(req, res, next);
+// });
 
 /************************************************************/
 // Handle the code parameter route last - if all other routes fail
